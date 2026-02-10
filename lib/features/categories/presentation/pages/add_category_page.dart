@@ -3,8 +3,12 @@ import 'package:admin_dashboard/config/routes_manager.dart';
 import 'package:admin_dashboard/core/shell/main_screen.dart';
 import 'package:admin_dashboard/core/widgets/main_shell.dart';
 import 'package:admin_dashboard/core/widgets/page_header.dart';
+import 'package:admin_dashboard/features/categories/domain/entities/category.dart';
+import 'package:admin_dashboard/features/categories/presentation/bloc/categories_cubit.dart';
+import 'package:admin_dashboard/features/categories/presentation/bloc/categories_state.dart';
 import 'package:admin_dashboard/features/categories/presentation/widgets/add_category_sections.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddCategoryPage extends StatefulWidget {
   const AddCategoryPage({super.key});
@@ -71,69 +75,86 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
           );
         }
       },
-      content: Scaffold(
-        backgroundColor: const Color(0xFFF9FAFB),
-        body: Column(
-          children: [
-            PageHeader(
-              breadcrumbTrail: const [
-                'Dashboard',
-                'Categories',
-                'Add Category',
-              ],
-              onBreadcrumbTap: (index) {
-                if (index < 2) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Center(
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: 800),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Add Category',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF111827),
+      content: BlocListener<CategoriesCubit, CategoriesState>(
+        listener: (context, state) {
+          if (state is CategoriesAdded) {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Category added successfully!')),
+            );
+          } else if (state is CategoriesError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+        child: Scaffold(
+          backgroundColor: const Color(0xFFF9FAFB),
+          body: Column(
+            children: [
+              PageHeader(
+                breadcrumbTrail: const [
+                  'Dashboard',
+                  'Categories',
+                  'Add Category',
+                ],
+                onBreadcrumbTap: (index) {
+                  if (index < 2) {
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(24),
+                  child: Center(
+                    child: Container(
+                      constraints: const BoxConstraints(maxWidth: 800),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Add Category',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF111827),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Create a new product category to organize your inventory.',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Color(0xFF6B7280),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'Create a new product category to organize your inventory.',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Color(0xFF6B7280),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 32),
-                        CategoryInfoSection(
-                          nameController: _nameController,
-                          slugController: _slugController,
-                          descriptionController: _descriptionController,
-                          onNameChanged: _onNameChanged,
-                        ),
-                        const SizedBox(height: 24),
-                        CategoryMediaSection(
-                          imageUrlController: _imageUrlController,
-                          previewImageUrl: _previewImageUrl,
-                          onFetch: _updatePreviewImage,
-                        ),
-                        const SizedBox(height: 24),
-                        _buildFooterActions(context),
-                      ],
+                          const SizedBox(height: 32),
+                          CategoryInfoSection(
+                            nameController: _nameController,
+                            slugController: _slugController,
+                            descriptionController: _descriptionController,
+                            onNameChanged: _onNameChanged,
+                          ),
+                          const SizedBox(height: 24),
+                          CategoryMediaSection(
+                            imageUrlController: _imageUrlController,
+                            previewImageUrl: _previewImageUrl,
+                            onFetch: _updatePreviewImage,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildFooterActions(context),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -173,20 +194,46 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
             ),
           ),
           const SizedBox(width: 12),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
+          BlocBuilder<CategoriesCubit, CategoriesState>(
+            builder: (context, state) {
+              final isAdding = state is CategoriesAdding;
+              return ElevatedButton(
+                onPressed: isAdding
+                    ? null
+                    : () {
+                        final category = Category(
+                          id: DateTime.now().millisecondsSinceEpoch.toString(),
+                          name: _nameController.text,
+                          slug: _slugController.text,
+                          description: _descriptionController.text,
+                          itemsCount: 0,
+                          imageUrl: _imageUrlController.text,
+                          updatedAt: DateTime.now(),
+                        );
+                        context.read<CategoriesCubit>().addCategory(category);
+                      },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorsManager.blue,
+                  foregroundColor: ColorsManager.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  elevation: 0,
+                ),
+                child: isAdding
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text('Create Category'),
+              );
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ColorsManager.blue,
-              foregroundColor: ColorsManager.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              elevation: 0,
-            ),
-            child: const Text('Create Category'),
           ),
         ],
       ),

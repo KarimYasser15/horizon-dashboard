@@ -24,3 +24,11 @@ class CategoriesError extends CategoriesState {
   const CategoriesError(this.message);
 }
 
+class CategoriesAdding extends CategoriesState {
+  const CategoriesAdding();
+}
+
+class CategoriesAdded extends CategoriesState {
+  const CategoriesAdded();
+}
+

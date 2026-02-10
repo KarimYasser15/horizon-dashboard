@@ -26,7 +26,10 @@ class CategoriesPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: BlocBuilder<CategoriesCubit, CategoriesState>(
               builder: (context, state) {
-                if (state is CategoriesLoading || state is CategoriesInitial) {
+                if (state is CategoriesLoading ||
+                    state is CategoriesInitial ||
+                    state is CategoriesAdding ||
+                    state is CategoriesAdded) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (state is CategoriesError) {

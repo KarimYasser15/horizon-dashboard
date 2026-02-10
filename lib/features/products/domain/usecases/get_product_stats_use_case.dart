@@ -1,6 +1,8 @@
+import 'package:injectable/injectable.dart';
 import '../entities/product_stats.dart';
 import '../repositories/product_repository.dart';
 
+@lazySingleton
 class GetProductStatsUseCase {
   final ProductRepository _repository;
 
