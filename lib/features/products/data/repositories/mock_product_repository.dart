@@ -1,7 +1,9 @@
+import 'package:injectable/injectable.dart';
 import 'package:admin_dashboard/features/products/domain/entities/product.dart';
 import 'package:admin_dashboard/features/products/domain/entities/product_stats.dart';
 import 'package:admin_dashboard/features/products/domain/repositories/product_repository.dart';
 
+@LazySingleton(as: ProductRepository)
 class MockProductRepository implements ProductRepository {
   @override
   Future<List<Product>> getProducts() async {
