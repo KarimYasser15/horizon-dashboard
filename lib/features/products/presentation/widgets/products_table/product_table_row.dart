@@ -20,20 +20,27 @@ class ProductTableRow {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(6),
-          child: Image.network(
-            product.imageUrl,
-            width: 48,
-            height: 48,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                width: 48,
-                height: 48,
-                color: Colors.grey.shade200,
-                child: const Icon(Icons.image, size: 24),
-              );
-            },
-          ),
+          child: product.imageUrl.isEmpty
+              ? Container(
+                  width: 48,
+                  height: 48,
+                  color: Colors.grey.shade200,
+                  child: const Icon(Icons.image, size: 24),
+                )
+              : Image.network(
+                  product.imageUrl,
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 48,
+                      height: 48,
+                      color: Colors.grey.shade200,
+                      child: const Icon(Icons.image, size: 24),
+                    );
+                  },
+                ),
         ),
         const SizedBox(width: 12),
         Expanded(

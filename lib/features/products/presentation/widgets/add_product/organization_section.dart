@@ -1,5 +1,8 @@
 import 'package:admin_dashboard/core/widgets/section_card.dart';
+import 'package:admin_dashboard/features/categories/presentation/bloc/categories_cubit.dart';
+import 'package:admin_dashboard/features/categories/presentation/bloc/categories_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OrganizationSection extends StatelessWidget {
   const OrganizationSection({
@@ -22,14 +25,29 @@ class OrganizationSection extends StatelessWidget {
       children: [
         LabeledField(
           label: 'Category',
-          child: DropdownButtonFormField<String>(
-            value: category,
-            decoration: AppInputDecoration(hint: 'Select category...'),
-            icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
-            items: ['Electronics', 'Clothing', 'Home', 'Beauty']
-                .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                .toList(),
-            onChanged: onCategoryChanged,
+          child: BlocBuilder<CategoriesCubit, CategoriesState>(
+            builder: (context, state) {
+              final categories = state is CategoriesLoaded
+                  ? state.categories.map((e) => e.name).toList()
+                  : <String>[];
+
+              // Ensure the selected value exists in the items list to avoid assertion error
+              final effectiveValue = categories.contains(category) ? category : null;
+
+              return DropdownButtonFormField<String>(
+                value: effectiveValue,
+                decoration: AppInputDecoration(
+                  hint: state is CategoriesLoading
+                      ? 'Loading categories...'
+                      : 'Select category...',
+                ),
+                icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                items: categories
+                    .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                    .toList(),
+                onChanged: onCategoryChanged,
+              );
+            },
           ),
         ),
         const SizedBox(height: 20),
