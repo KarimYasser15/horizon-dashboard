@@ -130,7 +130,7 @@ class _ProductsTableState extends State<ProductsTable> {
                           ),
                         ],
                         rows: _paginatedProducts
-                            .map((product) => ProductTableRow.build(product))
+                            .map((product) => ProductTableRow.build(context, product))
                             .toList(),
                       ),
                     ),

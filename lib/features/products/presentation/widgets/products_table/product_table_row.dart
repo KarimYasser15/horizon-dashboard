@@ -1,8 +1,12 @@
+import 'package:admin_dashboard/features/products/presentation/bloc/delete_product_cubit.dart';
+import 'package:admin_dashboard/features/products/presentation/bloc/products_cubit.dart';
+import 'package:admin_dashboard/features/products/presentation/pages/add_product_page.dart';
 import 'package:admin_dashboard/features/products/domain/entities/product.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductTableRow {
-  static DataRow build(Product product) {
+  static DataRow build(BuildContext context, Product product) {
     return DataRow(
       cells: [
         DataCell(_buildProductInfo(product)),
@@ -10,7 +14,7 @@ class ProductTableRow {
         DataCell(_buildPrice(product)),
         DataCell(_buildQuantity(product)),
         DataCell(_buildDescription(product)),
-        DataCell(_buildActions(product)),
+        DataCell(_buildActions(context, product)),
       ],
     );
   }
@@ -118,12 +122,19 @@ class ProductTableRow {
     );
   }
 
-  static Widget _buildActions(Product product) {
+  static Widget _buildActions(BuildContext context, Product product) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddProductPage(product: product),
+              ),
+            );
+          },
           icon: Icon(
             Icons.edit_outlined,
             size: 18,
@@ -136,7 +147,40 @@ class ProductTableRow {
           ),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (dialogContext) => AlertDialog(
+                title: const Text('Delete Product'),
+                content: Text(
+                  'Are you sure you want to delete "${product.name}"?',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(dialogContext),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      context
+                          .read<DeleteProductCubit>()
+                          .deleteProduct(product.id)
+                          .then((_) {
+                        if (context.mounted) {
+                          context.read<ProductsCubit>().loadProducts();
+                          Navigator.pop(dialogContext);
+                        }
+                      });
+                    },
+                    child: const Text(
+                      'Delete',
+                      style: TextStyle(color: Color(0xFFEF4444)),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
           icon: const Icon(
             Icons.delete_outline,
             size: 18,
