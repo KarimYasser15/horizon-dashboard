@@ -30,12 +30,18 @@ import 'package:admin_dashboard/features/products/domain/repositories/product_re
     as _i983;
 import 'package:admin_dashboard/features/products/domain/usecases/add_product_use_case.dart'
     as _i852;
+import 'package:admin_dashboard/features/products/domain/usecases/delete_product_use_case.dart'
+    as _i114;
 import 'package:admin_dashboard/features/products/domain/usecases/get_product_stats_use_case.dart'
     as _i881;
 import 'package:admin_dashboard/features/products/domain/usecases/get_products_use_case.dart'
     as _i433;
+import 'package:admin_dashboard/features/products/domain/usecases/update_product_use_case.dart'
+    as _i589;
 import 'package:admin_dashboard/features/products/presentation/bloc/add_product_cubit.dart'
     as _i477;
+import 'package:admin_dashboard/features/products/presentation/bloc/delete_product_cubit.dart'
+    as _i764;
 import 'package:admin_dashboard/features/products/presentation/bloc/products_cubit.dart'
     as _i851;
 import 'package:cloud_firestore/cloud_firestore.dart' as _i974;
@@ -84,11 +90,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i852.AddProductUseCase>(
       () => _i852.AddProductUseCase(gh<_i983.ProductRepository>()),
     );
-    gh.factory<_i477.AddProductCubit>(
-      () => _i477.AddProductCubit(gh<_i852.AddProductUseCase>()),
+    gh.lazySingleton<_i114.DeleteProductUseCase>(
+      () => _i114.DeleteProductUseCase(gh<_i983.ProductRepository>()),
+    );
+    gh.lazySingleton<_i589.UpdateProductUseCase>(
+      () => _i589.UpdateProductUseCase(gh<_i983.ProductRepository>()),
+    );
+    gh.factory<_i764.DeleteProductCubit>(
+      () => _i764.DeleteProductCubit(gh<_i114.DeleteProductUseCase>()),
     );
     gh.lazySingleton<_i51.AddCategoryUseCase>(
       () => _i51.AddCategoryUseCase(gh<_i395.CategoryRepository>()),
+    );
+    gh.factory<_i477.AddProductCubit>(
+      () => _i477.AddProductCubit(
+        gh<_i852.AddProductUseCase>(),
+        gh<_i589.UpdateProductUseCase>(),
+      ),
     );
     return this;
   }
