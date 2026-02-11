@@ -5,12 +5,12 @@ import '../entities/product.dart';
 import '../repositories/product_repository.dart';
 
 @lazySingleton
-class GetProductsUseCase {
-  final ProductRepository _repository;
+class AddProductUseCase {
+  final ProductRepository repository;
 
-  const GetProductsUseCase(this._repository);
+  AddProductUseCase(this.repository);
 
-  Future<Either<Failure, List<Product>>> call() {
-    return _repository.getProducts();
+  Future<Either<Failure, void>> call(Product product) async {
+    return await repository.addProduct(product);
   }
 }

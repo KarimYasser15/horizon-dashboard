@@ -16,13 +16,18 @@ class ProductsCubit extends Cubit<ProductsState> {
 
   Future<void> loadProducts() async {
     emit(const ProductsLoading());
-    try {
-      final products = await _getProductsUseCase();
-      final stats = await _getProductStatsUseCase();
-      emit(ProductsLoaded(products: products, stats: stats));
-    } catch (e) {
-      emit(ProductsError('Failed to load products'));
-    }
+    final productsResult = await _getProductsUseCase();
+    final statsResult = await _getProductStatsUseCase();
+
+    productsResult.fold(
+      (failure) => emit(ProductsError(failure.message)),
+      (products) {
+        statsResult.fold(
+          (failure) => emit(ProductsError(failure.message)),
+          (stats) => emit(ProductsLoaded(products: products, stats: stats)),
+        );
+      },
+    );
   }
 
   void updateSearchQuery(String query) {
