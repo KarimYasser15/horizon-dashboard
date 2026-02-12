@@ -5,6 +5,8 @@ import 'package:admin_dashboard/features/categories/data/models/category_model.d
 abstract class CategoryRemoteDataSource {
   Future<List<CategoryModel>> getCategories();
   Future<void> addCategory(CategoryModel category);
+  Future<void> updateCategory(CategoryModel category);
+  Future<void> deleteCategory(String id);
 }
 
 @LazySingleton(as: CategoryRemoteDataSource)
@@ -27,5 +29,18 @@ class CategoryRemoteDataSourceImpl implements CategoryRemoteDataSource {
         .collection('categories')
         .doc(category.id)
         .set(category.toJson());
+  }
+
+  @override
+  Future<void> updateCategory(CategoryModel category) async {
+    await firestore
+        .collection('categories')
+        .doc(category.id)
+        .update(category.toJson());
+  }
+
+  @override
+  Future<void> deleteCategory(String id) async {
+    await firestore.collection('categories').doc(id).delete();
   }
 }

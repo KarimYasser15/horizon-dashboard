@@ -1,6 +1,8 @@
 import 'package:admin_dashboard/config/colors_manager.dart';
 import 'package:admin_dashboard/config/routes_manager.dart';
+import 'package:admin_dashboard/config/text_style_manager.dart';
 import 'package:admin_dashboard/core/shell/main_screen.dart';
+import 'package:admin_dashboard/core/validators/validators.dart';
 import 'package:admin_dashboard/core/widgets/main_shell.dart';
 import 'package:admin_dashboard/core/widgets/page_header.dart';
 import 'package:admin_dashboard/features/categories/domain/entities/category.dart';
@@ -11,7 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddCategoryPage extends StatefulWidget {
-  const AddCategoryPage({super.key});
+  final Category? category;
+  const AddCategoryPage({super.key, this.category});
 
   @override
   State<AddCategoryPage> createState() => _AddCategoryPageState();
@@ -26,13 +29,37 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
-    _slugController = TextEditingController();
-    _descriptionController = TextEditingController();
-    _imageUrlController = TextEditingController();
+    _nameController = TextEditingController(text: widget.category?.name);
+    _slugController = TextEditingController(text: widget.category?.slug);
+    _descriptionController = TextEditingController(
+      text: widget.category?.description,
+    );
+    _imageUrlController = TextEditingController(
+      text: widget.category?.imageUrl,
+    );
+    if (widget.category != null) {
+      _previewImageUrl = widget.category?.imageUrl;
+    }
   }
 
   String? _previewImageUrl;
+
+  String? _nameError;
+  String? _slugError;
+  String? _imageUrlError;
+
+  bool _validate() {
+    setState(() {
+      _nameError = Validators.required(
+        _nameController.text,
+        fieldName: 'Category name',
+      );
+      _slugError = Validators.slug(_slugController.text, requiredField: true);
+      _imageUrlError = Validators.url(_imageUrlController.text);
+    });
+
+    return _nameError == null && _slugError == null && _imageUrlError == null;
+  }
 
   @override
   void dispose() {
@@ -49,17 +76,11 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
     });
   }
 
-  void _onNameChanged(String value) {
-    if (_slugController.text.isEmpty) {
-      _slugController.text = value.toLowerCase().replaceAll(
-        RegExp(r'\s+'),
-        '-',
-      );
-    }
-  }
+  void _onNameChanged(String value) {}
 
   @override
   Widget build(BuildContext context) {
+    final isEditing = widget.category != null;
     return MainShell(
       selectedRoute: AppRoute.categories,
       onRouteChanged: (route) {
@@ -80,7 +101,13 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
           if (state is CategoriesAdded) {
             Navigator.pop(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Category added successfully!')),
+              SnackBar(
+                content: Text(
+                  isEditing
+                      ? 'Category updated successfully!'
+                      : 'Category added successfully!',
+                ),
+              ),
             );
           } else if (state is CategoriesError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -96,10 +123,10 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
           body: Column(
             children: [
               PageHeader(
-                breadcrumbTrail: const [
+                breadcrumbTrail: [
                   'Dashboard',
                   'Categories',
-                  'Add Category',
+                  isEditing ? 'Edit Category' : 'Add Category',
                 ],
                 onBreadcrumbTap: (index) {
                   if (index < 2) {
@@ -116,21 +143,16 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Add Category',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF111827),
-                            ),
+                          Text(
+                            isEditing ? 'Edit Category' : 'Add Category',
+                            style: TextStyleManager.interBold,
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Create a new product category to organize your inventory.',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                            ),
+                          Text(
+                            isEditing
+                                ? 'Update the details of your product category.'
+                                : 'Create a new product category to organize your inventory.',
+                            style: TextStyleManager.interRegular,
                           ),
                           const SizedBox(height: 32),
                           CategoryInfoSection(
@@ -138,12 +160,15 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                             slugController: _slugController,
                             descriptionController: _descriptionController,
                             onNameChanged: _onNameChanged,
+                            nameError: _nameError,
+                            slugError: _slugError,
                           ),
                           const SizedBox(height: 24),
                           CategoryMediaSection(
                             imageUrlController: _imageUrlController,
                             previewImageUrl: _previewImageUrl,
                             onFetch: _updatePreviewImage,
+                            imageUrlError: _imageUrlError,
                           ),
                           const SizedBox(height: 24),
                           _buildFooterActions(context),
@@ -161,6 +186,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
   }
 
   Widget _buildFooterActions(BuildContext context) {
+    final isEditing = widget.category != null;
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -178,51 +204,75 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          OutlinedButton(
+          ElevatedButton(
             onPressed: () => Navigator.pop(context),
-            style: OutlinedButton.styleFrom(
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              side: BorderSide(color: Colors.grey.shade300),
-              backgroundColor: ColorsManager.white,
+              backgroundColor: Color(0xFFEFF6FF),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(6),
               ),
             ),
-            child: const Text(
+            child: Text(
               'Cancel',
-              style: TextStyle(color: Color(0xFF374151)),
+              style: TextStyleManager.interMedium.copyWith(
+                color: ColorsManager.blue,
+              ),
             ),
           ),
           const SizedBox(width: 12),
           BlocBuilder<CategoriesCubit, CategoriesState>(
             builder: (context, state) {
-              final isAdding = state is CategoriesAdding;
+              final isSubmitting = state is CategoriesAdding;
               return ElevatedButton(
-                onPressed: isAdding
+                onPressed: isSubmitting
                     ? null
                     : () {
+                        if (!_validate()) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Please fix the errors before saving',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
                         final category = Category(
-                          id: DateTime.now().millisecondsSinceEpoch.toString(),
-                          name: _nameController.text,
-                          slug: _slugController.text,
-                          description: _descriptionController.text,
-                          itemsCount: 0,
-                          imageUrl: _imageUrlController.text,
+                          id: isEditing
+                              ? widget.category!.id
+                              : DateTime.now().millisecondsSinceEpoch
+                                    .toString(),
+                          name: _nameController.text.trim(),
+                          slug: _slugController.text.trim(),
+                          description: _descriptionController.text.trim(),
+                          itemsCount: widget.category?.itemsCount ?? 0,
+                          imageUrl: _imageUrlController.text.trim(),
                           updatedAt: DateTime.now(),
                         );
-                        context.read<CategoriesCubit>().addCategory(category);
+                        if (isEditing) {
+                          context.read<CategoriesCubit>().updateCategory(
+                            category,
+                          );
+                        } else {
+                          context.read<CategoriesCubit>().addCategory(category);
+                        }
                       },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorsManager.blue,
                   foregroundColor: ColorsManager.white,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(6),
                   ),
                   elevation: 0,
                 ),
-                child: isAdding
+                child: isSubmitting
                     ? const SizedBox(
                         height: 20,
                         width: 20,
@@ -231,7 +281,7 @@ class _AddCategoryPageState extends State<AddCategoryPage> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text('Create Category'),
+                    : Text(isEditing ? 'Save Changes' : 'Create Category'),
               );
             },
           ),

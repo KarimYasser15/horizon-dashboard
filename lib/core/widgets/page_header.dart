@@ -1,4 +1,5 @@
 import 'package:admin_dashboard/config/colors_manager.dart';
+import 'package:admin_dashboard/config/text_style_manager.dart';
 import 'package:flutter/material.dart';
 
 class PageHeader extends StatelessWidget {
@@ -79,9 +80,14 @@ class PageHeader extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final isMobile = constraints.maxWidth < 600;
-              
+
               return Padding(
-                padding: EdgeInsets.fromLTRB(isMobile ? 16 : 24, 20, isMobile ? 16 : 24, 0),
+                padding: EdgeInsets.fromLTRB(
+                  isMobile ? 16 : 24,
+                  20,
+                  isMobile ? 16 : 24,
+                  0,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,11 +95,7 @@ class PageHeader extends StatelessWidget {
                     if (title != null)
                       Text(
                         title!,
-                        style: TextStyle(
-                          fontSize: isMobile ? 22 : 28,
-                          fontWeight: FontWeight.w700,
-                          color: const Color(0xFF111827),
-                        ),
+                        style: TextStyleManager.interBold,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -105,9 +107,8 @@ class PageHeader extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 12),
                             child: Text(
                               description!,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Color(0xFF6B7280),
+                              style: TextStyleManager.interRegular.copyWith(
+                                color: ColorsManager.grey,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -130,8 +131,9 @@ class PageHeader extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                            if (trailing != null) ...[ 
-                              if (description != null) const SizedBox(width: 16),
+                            if (trailing != null) ...[
+                              if (description != null)
+                                const SizedBox(width: 16),
                               trailing!,
                             ],
                           ],

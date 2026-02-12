@@ -6,10 +6,12 @@ class MediaSection extends StatelessWidget {
     super.key,
     required this.imageUrlController,
     required this.onFetch,
+    this.imageUrlError,
   });
 
   final TextEditingController imageUrlController;
   final VoidCallback onFetch;
+  final String? imageUrlError;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,10 @@ class MediaSection extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: imageUrlController,
-                  decoration: AppInputDecoration(hint: 'https://'),
+                  decoration: AppInputDecoration(
+                    hint: 'https://',
+                    errorText: imageUrlError,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),

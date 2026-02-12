@@ -32,4 +32,25 @@ class CategoryRepositoryImpl implements CategoryRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateCategory(Category category) async {
+    try {
+      final model = CategoryModel.fromEntity(category);
+      await remoteDataSource.updateCategory(model);
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteCategory(String id) async {
+    try {
+      await remoteDataSource.deleteCategory(id);
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

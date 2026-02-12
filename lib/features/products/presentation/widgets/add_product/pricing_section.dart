@@ -8,12 +8,18 @@ class PricingSection extends StatelessWidget {
     required this.compareAtPriceController,
     required this.quantityController,
     required this.skuController,
+    this.basePriceError,
+    this.compareAtPriceError,
+    this.quantityError,
   });
 
   final TextEditingController basePriceController;
   final TextEditingController compareAtPriceController;
   final TextEditingController quantityController;
   final TextEditingController skuController;
+  final String? basePriceError;
+  final String? compareAtPriceError;
+  final String? quantityError;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +33,10 @@ class PricingSection extends StatelessWidget {
                 label: 'Base Price',
                 child: TextField(
                   controller: basePriceController,
-                  decoration: AppInputDecoration(hint: '\$ 0.00'),
+                  decoration: AppInputDecoration(
+                    hint: '\$ 0.00',
+                    errorText: basePriceError,
+                  ),
                   keyboardType: TextInputType.number,
                 ),
               ),
@@ -38,7 +47,10 @@ class PricingSection extends StatelessWidget {
                 label: 'Compare at Price',
                 child: TextField(
                   controller: compareAtPriceController,
-                  decoration: AppInputDecoration(hint: '\$ 0.00'),
+                  decoration: AppInputDecoration(
+                    hint: '\$ 0.00',
+                    errorText: compareAtPriceError,
+                  ),
                   keyboardType: TextInputType.number,
                 ),
               ),
@@ -53,7 +65,10 @@ class PricingSection extends StatelessWidget {
                 label: 'Quantity',
                 child: TextField(
                   controller: quantityController,
-                  decoration: AppInputDecoration(hint: '0'),
+                  decoration: AppInputDecoration(
+                    hint: '0',
+                    errorText: quantityError,
+                  ),
                   keyboardType: TextInputType.number,
                 ),
               ),

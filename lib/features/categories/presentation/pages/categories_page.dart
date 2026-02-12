@@ -6,7 +6,6 @@ import 'package:admin_dashboard/features/categories/presentation/widgets/categor
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-/// Categories content for the main shell. Uses [PageHeader] + grid; no shell/scaffold.
 class CategoriesPage extends StatelessWidget {
   const CategoriesPage({super.key});
 
