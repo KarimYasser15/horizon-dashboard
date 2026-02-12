@@ -1,1 +1,39 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"horizon-task-11766","appId":"1:1016201519964:android:ee2a776fb04ae3eb319799","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"horizon-task-11766","configurations":{"android":"1:1016201519964:android:ee2a776fb04ae3eb319799","ios":"1:1016201519964:ios:a86b7ad4fb7040a7319799","macos":"1:1016201519964:ios:a86b7ad4fb7040a7319799","web":"1:1016201519964:web:bfc2c46862fcb0b9319799","windows":"1:1016201519964:web:64c7e38d36b1a55e319799"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "horizon-task-11766",
+          "appId": "1:1016201519964:android:ee2a776fb04ae3eb319799",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "horizon-task-11766",
+          "configurations": {
+            "android": "1:1016201519964:android:ee2a776fb04ae3eb319799",
+            "ios": "1:1016201519964:ios:a86b7ad4fb7040a7319799",
+            "macos": "1:1016201519964:ios:a86b7ad4fb7040a7319799",
+            "web": "1:1016201519964:web:bfc2c46862fcb0b9319799",
+            "windows": "1:1016201519964:web:64c7e38d36b1a55e319799"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
