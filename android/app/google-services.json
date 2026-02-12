@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1016201519964",
+    "project_id": "horizon-task-11766",
+    "storage_bucket": "horizon-task-11766.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016201519964:android:ee2a776fb04ae3eb319799",
+        "android_client_info": {
+          "package_name": "com.example.admin_dashboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbUYGkN250UxA7xpW0gDS-dqtT36F27H4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016201519964:android:8dedb707a90223a3319799",
+        "android_client_info": {
+          "package_name": "com.example.horizon_mobile"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbUYGkN250UxA7xpW0gDS-dqtT36F27H4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

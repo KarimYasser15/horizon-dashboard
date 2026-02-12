@@ -1,0 +1,41 @@
+class Product {
+  final String id;
+  final String name;
+  final String variant;
+  final String category;
+  final double price;
+  final double? compareAtPrice;
+  final int quantity;
+  final String description;
+  final String imageUrl;
+  final String sku;
+  final List<String> tags;
+
+  const Product({
+    required this.id,
+    required this.name,
+    required this.variant,
+    required this.category,
+    required this.price,
+    this.compareAtPrice,
+    required this.quantity,
+    required this.description,
+    required this.imageUrl,
+    this.sku = '',
+    this.tags = const [],
+  });
+
+  String get displayName => '$name / $variant';
+
+  StockStatus get stockStatus {
+    if (quantity == 0) return StockStatus.outOfStock;
+    if (quantity < 10) return StockStatus.lowStock;
+    return StockStatus.inStock;
+  }
+}
+
+enum StockStatus {
+  inStock,
+  lowStock,
+  outOfStock,
+}
