@@ -1,7 +1,9 @@
 import 'package:admin_dashboard/config/colors_manager.dart';
 import 'package:admin_dashboard/config/routes_manager.dart';
+import 'package:admin_dashboard/config/text_style_manager.dart';
 import 'package:admin_dashboard/core/di/service_locator.dart';
 import 'package:admin_dashboard/core/shell/main_screen.dart';
+import 'package:admin_dashboard/core/validators/validators.dart';
 import 'package:admin_dashboard/core/widgets/main_shell.dart';
 import 'package:admin_dashboard/core/widgets/page_header.dart';
 import 'package:admin_dashboard/features/products/domain/entities/product.dart';
@@ -68,10 +70,16 @@ class _AddProductPageState extends State<AddProductPage> {
     }
   }
 
-  // State
   String _status = 'Active';
   String? _category;
   String? _previewImageUrl;
+
+  String? _nameError;
+  String? _imageUrlError;
+  String? _basePriceError;
+  String? _compareAtPriceError;
+  String? _quantityError;
+  String? _categoryError;
 
   @override
   void dispose() {
@@ -93,11 +101,47 @@ class _AddProductPageState extends State<AddProductPage> {
     });
   }
 
+  bool _validate() {
+    setState(() {
+      _nameError = Validators.required(
+        _nameController.text,
+        fieldName: 'Product name',
+      );
+      _imageUrlError = Validators.url(_imageUrlController.text);
+      _basePriceError = Validators.price(
+        _basePriceController.text,
+        fieldName: 'Base price',
+        requiredField: true,
+      );
+      _compareAtPriceError = Validators.price(
+        _compareAtPriceController.text,
+        fieldName: 'Compare at price',
+        requiredField: false,
+      );
+      _quantityError = Validators.quantity(
+        _quantityController.text,
+        fieldName: 'Quantity',
+      );
+      _categoryError = Validators.requiredSelection(
+        _category,
+        fieldName: 'category',
+      );
+    });
+
+    return _nameError == null &&
+        _imageUrlError == null &&
+        _basePriceError == null &&
+        _compareAtPriceError == null &&
+        _quantityError == null &&
+        _categoryError == null;
+  }
+
   void _saveProduct(BuildContext context) {
-    if (_nameController.text.isEmpty || _category == null) {
+    if (!_validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please fill in required fields (Name, Category)'),
+          content: Text('Please fix the errors before saving'),
+          backgroundColor: Colors.red,
         ),
       );
       return;
@@ -209,12 +253,14 @@ class _AddProductPageState extends State<AddProductPage> {
                                           nameController: _nameController,
                                           descriptionController:
                                               _descriptionController,
+                                          nameError: _nameError,
                                         ),
                                         const SizedBox(height: 24),
                                         MediaSection(
                                           imageUrlController:
                                               _imageUrlController,
                                           onFetch: _updatePreviewImage,
+                                          imageUrlError: _imageUrlError,
                                         ),
                                         const SizedBox(height: 24),
                                         PricingSection(
@@ -225,6 +271,10 @@ class _AddProductPageState extends State<AddProductPage> {
                                           quantityController:
                                               _quantityController,
                                           skuController: _skuController,
+                                          basePriceError: _basePriceError,
+                                          compareAtPriceError:
+                                              _compareAtPriceError,
+                                          quantityError: _quantityError,
                                         ),
                                       ],
                                     ),
@@ -247,6 +297,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                           productTypeController:
                                               _productTypeController,
                                           tagsController: _tagsController,
+                                          categoryError: _categoryError,
                                         ),
                                         const SizedBox(height: 24),
                                         PreviewSection(
@@ -264,11 +315,13 @@ class _AddProductPageState extends State<AddProductPage> {
                                     nameController: _nameController,
                                     descriptionController:
                                         _descriptionController,
+                                    nameError: _nameError,
                                   ),
                                   const SizedBox(height: 24),
                                   MediaSection(
                                     imageUrlController: _imageUrlController,
                                     onFetch: _updatePreviewImage,
+                                    imageUrlError: _imageUrlError,
                                   ),
                                   const SizedBox(height: 24),
                                   PricingSection(
@@ -277,6 +330,9 @@ class _AddProductPageState extends State<AddProductPage> {
                                         _compareAtPriceController,
                                     quantityController: _quantityController,
                                     skuController: _skuController,
+                                    basePriceError: _basePriceError,
+                                    compareAtPriceError: _compareAtPriceError,
+                                    quantityError: _quantityError,
                                   ),
                                   const SizedBox(height: 24),
                                   StatusSection(
@@ -292,6 +348,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                     productTypeController:
                                         _productTypeController,
                                     tagsController: _tagsController,
+                                    categoryError: _categoryError,
                                   ),
                                   const SizedBox(height: 24),
                                   PreviewSection(imageUrl: _previewImageUrl),
@@ -318,19 +375,15 @@ class _AddProductPageState extends State<AddProductPage> {
       children: [
         Text(
           widget.product == null ? 'Add New Product' : 'Edit Product',
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
-          ),
+          style: TextStyleManager.interBold,
         ),
         Row(
           children: [
             OutlinedButton(
               onPressed: () => Navigator.pop(context),
               style: OutlinedButton.styleFrom(
-                backgroundColor: ColorsManager.white,
-                side: BorderSide(color: Colors.grey.shade300),
+                backgroundColor: const Color(0xFFEFF6FF),
+                side: BorderSide.none,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
                   vertical: 12,
@@ -339,16 +392,23 @@ class _AddProductPageState extends State<AddProductPage> {
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Discard',
-                style: TextStyle(color: Color(0xFF374151)),
+                style: TextStyleManager.interMedium.copyWith(
+                  color: ColorsManager.blue,
+                ),
               ),
             ),
             const SizedBox(width: 12),
             ElevatedButton.icon(
               onPressed: () => _saveProduct(context),
               icon: const Icon(Icons.save_outlined, size: 18),
-              label: const Text('Save Product'),
+              label: Text(
+                'Save Product',
+                style: TextStyleManager.interMedium.copyWith(
+                  color: ColorsManager.white,
+                ),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: ColorsManager.blue,
                 foregroundColor: ColorsManager.white,

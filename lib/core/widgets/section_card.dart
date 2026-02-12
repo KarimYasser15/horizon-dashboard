@@ -1,4 +1,5 @@
 import 'package:admin_dashboard/config/colors_manager.dart';
+import 'package:admin_dashboard/config/text_style_manager.dart';
 import 'package:flutter/material.dart';
 
 class SectionCard extends StatelessWidget {
@@ -54,14 +55,7 @@ class LabeledField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF374151),
-          ),
-        ),
+        Text(label, style: TextStyleManager.interMedium),
         const SizedBox(height: 8),
         child,
       ],
@@ -70,10 +64,11 @@ class LabeledField extends StatelessWidget {
 }
 
 class AppInputDecoration extends InputDecoration {
-  AppInputDecoration({required String hint})
+  AppInputDecoration({required String hint, String? errorText})
     : super(
         hintText: hint,
         hintStyle: const TextStyle(color: Color(0xFF9CA3AF), fontSize: 14),
+        errorText: errorText,
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(
@@ -86,11 +81,24 @@ class AppInputDecoration extends InputDecoration {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(
+            color: errorText != null ? Colors.red : Colors.grey.shade300,
+          ),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(color: ColorsManager.blue, width: 2),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.red, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          borderSide: BorderSide(
+            color: errorText != null ? Colors.red : ColorsManager.blue,
+            width: 2,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
       );
 }

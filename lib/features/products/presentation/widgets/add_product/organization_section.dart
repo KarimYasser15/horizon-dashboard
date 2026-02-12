@@ -11,12 +11,14 @@ class OrganizationSection extends StatelessWidget {
     required this.onCategoryChanged,
     required this.productTypeController,
     required this.tagsController,
+    this.categoryError,
   });
 
   final String? category;
   final ValueChanged<String?> onCategoryChanged;
   final TextEditingController productTypeController;
   final TextEditingController tagsController;
+  final String? categoryError;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,6 @@ class OrganizationSection extends StatelessWidget {
                   ? state.categories.map((e) => e.name).toList()
                   : <String>[];
 
-              // Ensure the selected value exists in the items list to avoid assertion error
               final effectiveValue = categories.contains(category) ? category : null;
 
               return DropdownButtonFormField<String>(
@@ -40,6 +41,7 @@ class OrganizationSection extends StatelessWidget {
                   hint: state is CategoriesLoading
                       ? 'Loading categories...'
                       : 'Select category...',
+                  errorText: categoryError,
                 ),
                 icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
                 items: categories

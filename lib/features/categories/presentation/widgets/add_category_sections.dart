@@ -1,3 +1,5 @@
+import 'package:admin_dashboard/config/colors_manager.dart';
+import 'package:admin_dashboard/config/text_style_manager.dart';
 import 'package:admin_dashboard/core/widgets/section_card.dart';
 import 'package:flutter/material.dart';
 
@@ -8,12 +10,16 @@ class CategoryInfoSection extends StatelessWidget {
     required this.slugController,
     required this.descriptionController,
     required this.onNameChanged,
+    this.nameError,
+    this.slugError,
   });
 
   final TextEditingController nameController;
   final TextEditingController slugController;
   final TextEditingController descriptionController;
   final ValueChanged<String> onNameChanged;
+  final String? nameError;
+  final String? slugError;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +30,10 @@ class CategoryInfoSection extends StatelessWidget {
           label: 'Category Name',
           child: TextField(
             controller: nameController,
-            decoration: AppInputDecoration(hint: 'e.g. Summer Collection'),
+            decoration: AppInputDecoration(
+              hint: 'e.g. Summer Collection',
+              errorText: nameError,
+            ),
             onChanged: onNameChanged,
           ),
         ),
@@ -36,7 +45,10 @@ class CategoryInfoSection extends StatelessWidget {
             children: [
               TextField(
                 controller: slugController,
-                decoration: AppInputDecoration(hint: 'e.g. summer-collection'),
+                decoration: AppInputDecoration(
+                  hint: 'e.g. summer-collection',
+                  errorText: slugError,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
@@ -66,11 +78,13 @@ class CategoryMediaSection extends StatelessWidget {
     required this.imageUrlController,
     required this.previewImageUrl,
     required this.onFetch,
+    this.imageUrlError,
   });
 
   final TextEditingController imageUrlController;
   final String? previewImageUrl;
   final VoidCallback onFetch;
+  final String? imageUrlError;
 
   @override
   Widget build(BuildContext context) {
@@ -89,13 +103,13 @@ class CategoryMediaSection extends StatelessWidget {
                       controller: imageUrlController,
                       decoration: AppInputDecoration(
                         hint: 'https://example.com/image.jpg',
+                        errorText: imageUrlError,
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
                   IconButton(
                     onPressed: () {},
-                    // Placeholder for link action if needed
                     icon: Icon(Icons.link, color: Colors.grey.shade400),
                   ),
                   const SizedBox(width: 8),
@@ -106,17 +120,16 @@ class CategoryMediaSection extends StatelessWidget {
                         horizontal: 16,
                         vertical: 16,
                       ),
-                      backgroundColor: const Color(0xFFF3F4F6),
+                      backgroundColor: const Color(0xFFEFF6FF),
                       side: BorderSide.none,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Preview',
-                      style: TextStyle(
-                        color: Color(0xFF374151),
-                        fontWeight: FontWeight.w600,
+                      style: TextStyleManager.interMedium.copyWith(
+                        color: ColorsManager.blue,
                       ),
                     ),
                   ),

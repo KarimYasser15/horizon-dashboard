@@ -6,10 +6,14 @@ class GeneralInfoSection extends StatelessWidget {
     super.key,
     required this.nameController,
     required this.descriptionController,
+    this.nameError,
+    this.descriptionError,
   });
 
   final TextEditingController nameController;
   final TextEditingController descriptionController;
+  final String? nameError;
+  final String? descriptionError;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +25,9 @@ class GeneralInfoSection extends StatelessWidget {
           child: TextField(
             controller: nameController,
             decoration: AppInputDecoration(
-                hint: 'e.g. Wireless Noise-Cancelling Headphones'),
+              hint: 'e.g. Wireless Noise-Cancelling Headphones',
+              errorText: nameError,
+            ),
           ),
         ),
         const SizedBox(height: 20),
@@ -31,7 +37,9 @@ class GeneralInfoSection extends StatelessWidget {
             controller: descriptionController,
             maxLines: 4,
             decoration: AppInputDecoration(
-                hint: 'Describe the product features, specs, and benefits...'),
+              hint: 'Describe the product features, specs, and benefits...',
+              errorText: descriptionError,
+            ),
           ),
         ),
       ],

@@ -49,3 +49,8 @@ const List<NavSection> navSections = [
   ),
   NavSection(routes: [AppRoute.general, AppRoute.security]),
 ];
+
+const Set<AppRoute> enabledRoutes = {
+  AppRoute.products,
+  AppRoute.categories,
+};
